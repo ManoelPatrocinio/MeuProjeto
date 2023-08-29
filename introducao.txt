@@ -1,1 +1,3 @@
-Estado inicial do repositorio, ainda local.
+1º Estado inicial do repositorio, ainda local.
+
+2º Criada a branch feature-navba e feita está alteração no arquivo introdução
