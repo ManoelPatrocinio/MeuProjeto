@@ -1,5 +1,3 @@
 1º Estado inicial do repositorio, ainda local.
 
 2º Criada a branch feature-navba e feita está alteração no arquivo introdução
-
-3º Alteração indesejada para resolução da questãos 9.
