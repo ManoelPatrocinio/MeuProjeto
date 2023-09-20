@@ -800,6 +800,44 @@ struct Locacao
         }
     }
 
+   
+    void excluirLocacao(vector<Veiculo>&Listaveiculo){
+
+        int cont = -1;
+        system("clear");
+        string exlocacao;
+        cout<<"digite a placa de seu veiculo"<<endl;
+        getline(cin,exlocacao);
+
+        vector<Veiculo>::iterator i;
+        i = Listaveiculo.begin();
+
+        for (auto &veiculo : Listaveiculo)
+        {
+            cont += 1;
+            if (exlocacao == veiculo.Placa_do_Veiculo)
+            {
+
+                advance(i, cont);
+                Listaveiculo.erase(i);
+                cout << "Locação Excluída com sucesso !" << endl;
+            }
+        }
+
+    }
+
+    void alterarLocacao(vector<Locacao> &ListaPassageiro){
+        string placadoveiculo;
+        cout<<"digite a placa do seu veiculo"<<endl;
+        getline(cin,placadoveiculo);
+
+          
+    }
+
+    void  listarLocacoes(vector<Locacao> &ListaLocacoes){
+
+    }
+   
     int menu_locacao(void)
     {
         int escolha;
@@ -919,11 +957,14 @@ int main(void)
                     locacaoDados.incluirLocacao(&locacaoDados, listaDeClientes, listaDeVeiculos);
                     break;
                 case 2:
+                    locacaoDados.excluirLocacao(listaDeVeiculos);
                     break;
 
                 case 3:
+                locacaoDados.alterarLocacao(listaDeLocacoes);
                     break;
                 case 4:
+                locacaoDados.listarLocacoes(listaDeLocacoes);
                     break;
                 default:
                     break;
