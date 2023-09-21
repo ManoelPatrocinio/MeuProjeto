@@ -691,15 +691,27 @@ struct Locacao
     DataHora Data_hora_retirada;
     DataHora Data_hora_entrega;
     string cliente_cnh;
+    string cliente_cpf;
     string veiculo_placa;
 
-    int verificaPlaca(vector<Veiculo> &listaDeVeiculos, string placaTemporaria)
+    int verificaPlaca(vector<Veiculo> &listaDeVeiculos, string placaTempolaria)
     {
         for (auto &veiculo : listaDeVeiculos)
         {
-            if (veiculo.Placa_do_Veiculo == placaTemporaria)
+            if (veiculo.Placa_do_Veiculo == placaTempolaria)
                 return 1;
         };
+
+        return 0;
+    }
+
+    int verificaCPF(vector<Cliente> &listaDeClientes, string cpfDeBusca)
+    {
+        for (auto &cliente : listaDeClientes)
+        {
+            if (cliente.CPF == cpfDeBusca)
+                return 1;
+        }
 
         return 0;
     }
@@ -707,7 +719,7 @@ struct Locacao
                         vector<Veiculo> &listaDeVeiculos)
     {
         int validacao = 0;
-        string CNHTemporaria, placaTemporaria;
+        string CNHTempolaria, placaTempolaria, cpfTempolario;
         char realizadaTemporaria;
         system("clear");
 
@@ -716,11 +728,11 @@ struct Locacao
              << endl;
 
         cout << "Informe a CNH do cliente: ";
-        getline(cin, CNHTemporaria);
+        getline(cin, CNHTempolaria);
 
         for (auto &cliente : listaDeClientes)
         {
-            if (cliente.CNH == CNHTemporaria)
+            if (cliente.CNH == CNHTempolaria)
             {
                 if (cliente.CPF.length() <= 0)
                 {
@@ -736,7 +748,7 @@ struct Locacao
                 }
                 else
                 {
-                    locacao->cliente_cnh = CNHTemporaria;
+                    locacao->cliente_cnh = CNHTempolaria;
                     validacao = 1;
                 }
             }
@@ -751,19 +763,39 @@ struct Locacao
             cout << "Registro não realizado !" << endl
                  << endl;
 
-            return ;
+            return;
         };
 
         validacao = 0;
+        do
+        {
+            cout << "Informe o CPF do cliente: ";
+            getline(cin, cpfTempolario);
+
+            if (verificaCPF(listaDeClientes, cpfTempolario) == 1)
+            {
+                locacao->cliente_cpf = cpfTempolario;
+            }
+            else
+            {
+                system("clear");
+                cout << endl;
+                cout << endl;
+                cout << "---- Alerta ! ---" << endl;
+                cout << "Não existe um cliente com CPF Informado" << endl;
+                cout << "Informe com CPF valido !" << endl
+                     << endl;
+            };
+        } while (verificaCPF(listaDeClientes, cpfTempolario) != 1);
 
         do
         {
             cout << "Informe a placa do veiculo: ";
-            getline(cin, placaTemporaria);
+            getline(cin, placaTempolaria);
 
-            if (verificaPlaca(listaDeVeiculos, placaTemporaria) == 1)
+            if (verificaPlaca(listaDeVeiculos, placaTempolaria) == 1)
             {
-                locacao->veiculo_placa = placaTemporaria;
+                locacao->veiculo_placa = placaTempolaria;
             }
             else
             {
@@ -775,7 +807,7 @@ struct Locacao
                 cout << "Informe uma placa valida !" << endl
                      << endl;
             };
-        } while (verificaPlaca(listaDeVeiculos, placaTemporaria) != 1);
+        } while (verificaPlaca(listaDeVeiculos, placaTempolaria) != 1);
 
         cout << endl;
         cout << "A retirada do veiculo foi realizada ?" << endl
@@ -854,6 +886,7 @@ struct Locacao
     void alterarLocacao(vector<Locacao> &listaDeLocacoes, vector<Cliente> &listaDeClientes)
     {
         Locacao novosDadosLocacao;
+        string cpfDeBusca;
 
         cout << endl;
         cout << "--- Alterar Locação --" << endl
@@ -884,13 +917,77 @@ struct Locacao
                 }
             }
         }
+
+        do
+        {
+            if (listaDeLocacoes.size() > 0)
+            {
+                cout << "Informe o CPF do cliente que deseja alterar o registro de locação: ";
+                getline(cin, cpfDeBusca);
+            }
+
+            if (verificaCPF(listaDeClientes, cpfDeBusca) == 1)
+            {
+
+                for (auto &locacao : listaDeLocacoes)
+                {
+                    if (locacao.cliente_cpf == cpfDeBusca)
+                    {
+                        do
+                        {
+                            cout << "Digite o Dia de entrega do veiculo: ";
+                            cin >> novosDadosLocacao.Data_hora_entrega.Dia;
+                            locacao.Data_hora_entrega.Dia = novosDadosLocacao.Data_hora_entrega.Dia;
+                        } while (novosDadosLocacao.Data_hora_entrega.Dia <= 0 || novosDadosLocacao.Data_hora_entrega.Dia > 31);
+
+                        do
+                        {
+                            cout << "Digite o Mes de entrega do veiculo: ";
+                            cin >> novosDadosLocacao.Data_hora_entrega.Mes;
+                            locacao.Data_hora_entrega.Mes = novosDadosLocacao.Data_hora_entrega.Mes;
+
+                        } while (novosDadosLocacao.Data_hora_entrega.Mes <= 0 || novosDadosLocacao.Data_hora_entrega.Mes > 12);
+
+                        do
+                        {
+                            cout << "Digite o Ano de entrega do veiculo: ";
+                            cin >> novosDadosLocacao.Data_hora_entrega.Ano;
+                            locacao.Data_hora_entrega.Ano = novosDadosLocacao.Data_hora_entrega.Ano;
+
+                        } while (novosDadosLocacao.Data_hora_entrega.Ano < 1900 || novosDadosLocacao.Data_hora_entrega.Ano > 3000);
+
+                        do
+                        {
+                            cout << "Digite a Hora/minuto de entrega do veiculo(ex: 10.30 ou 18.15): ";
+                            cin >> novosDadosLocacao.Data_hora_entrega.hora;
+                            locacao.Data_hora_entrega.hora = novosDadosLocacao.Data_hora_entrega.hora;
+
+                        } while (novosDadosLocacao.Data_hora_entrega.hora <= 0 || novosDadosLocacao.Data_hora_entrega.hora > 24);
+
+                        cout << endl
+                             << endl;
+                        cout << " -- Alteração  realizada com sucesso ! --" << endl
+                             << endl;
+                    }
+                }
+            }
+            else
+            {
+                system("clear");
+                cout << endl;
+                cout << endl;
+                cout << "---- Alerta ! ---" << endl;
+                cout << "Não existe um cliente com CPF Informado" << endl;
+                cout << "Informe com CPF valido !" << endl
+                     << endl;
+            }
+        } while (verificaCPF(listaDeClientes, cpfDeBusca) != 1);
     }
 
     void listarLocacoes(vector<Locacao> &ListaLocacoes)
     {
         system("clear");
 
-        cout << "size ListaLocacoes: " << ListaLocacoes.size() << endl;
         if (ListaLocacoes.size() <= 0)
         {
             cout << endl
@@ -904,11 +1001,11 @@ struct Locacao
                  << endl;
             for (auto &locacao : ListaLocacoes)
             {
-                cout << "Veiculo placa:" << locacao.veiculo_placa << endl;
-                cout << "Retirada:" << locacao.realizada << endl;
-                cout << "Cliente CNH:" << locacao.cliente_cnh << endl;
-                cout << "Retirada:" << locacao.Data_hora_retirada.Dia << "/" << locacao.Data_hora_retirada.Mes << "/" << locacao.Data_hora_retirada.Ano << endl;
-                cout << "Entrega:" << locacao.Data_hora_entrega.Dia << "/" << locacao.Data_hora_entrega.Mes << "/" << locacao.Data_hora_entrega.Ano << endl;
+                cout << "Loção Realizada ( n-Não s-Sim): " << locacao.realizada << endl;
+                cout << "Veiculo placa: " << locacao.veiculo_placa << endl;
+                cout << "Cliente CNH: " << locacao.cliente_cnh << endl;
+                cout << "Data da Retirada: " << locacao.Data_hora_retirada.Dia << "/" << locacao.Data_hora_retirada.Mes << "/" << locacao.Data_hora_retirada.Ano << endl;
+                cout << "Data da Entrega: " << locacao.Data_hora_entrega.Dia << "/" << locacao.Data_hora_entrega.Mes << "/" << locacao.Data_hora_entrega.Ano << endl;
 
                 cout << "---------------- " << endl;
             }
