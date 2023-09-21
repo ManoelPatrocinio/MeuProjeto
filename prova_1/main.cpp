@@ -715,11 +715,12 @@ struct Locacao
 
         return 0;
     }
+
     void incluirLocacao(Locacao *locacao, vector<Cliente> &listaDeClientes,
                         vector<Veiculo> &listaDeVeiculos)
     {
         int validacao = 0;
-        string CNHTempolaria, placaTempolaria, cpfTempolario;
+        string CNHTempolaria;
         char realizadaTemporaria;
         system("clear");
 
@@ -727,56 +728,53 @@ struct Locacao
         cout << "--- Incluir Locação --" << endl
              << endl;
 
-        cout << "Informe a CNH do cliente: ";
-        getline(cin, CNHTempolaria);
-
-        for (auto &cliente : listaDeClientes)
+        do
         {
-            if (cliente.CNH == CNHTempolaria)
+            cout << "Informe a CNH do cliente: ";
+            getline(cin, CNHTempolaria);
+
+            for (auto &cliente : listaDeClientes)
             {
-                if (cliente.CPF.length() <= 0)
+                if (cliente.CNH == CNHTempolaria)
                 {
+                    if (cliente.CPF.length() <= 0)
+                    {
 
-                    cout << endl;
-                    cout << endl;
-                    cout << "---- Alerta ! ---" << endl;
-                    cout << "O CPF deste cliente não existe !" << endl;
-                    cout << "Edite este cliente e adicione um CPF válido" << endl
-                         << endl;
+                        cout << endl;
+                        cout << endl;
+                        cout << "---- Alerta ! ---" << endl;
+                        cout << "O CPF deste cliente não existe !" << endl;
+                        cout << "Edite este cliente e adicione um CPF válido" << endl
+                             << endl;
 
-                    return;
-                }
-                else
-                {
-                    locacao->cliente_cnh = CNHTempolaria;
-                    validacao = 1;
+                        return;
+                    }
+                    else
+                    {
+                        locacao->cliente_cnh = CNHTempolaria;
+                        validacao = 1;
+                    }
                 }
             }
-        }
 
-        if (validacao == 0)
-        {
-            cout << endl;
-            cout << endl;
-            cout << "---- Alerta ! ---" << endl;
-            cout << "Não existe um cliente com a CNH Informada" << endl;
-            cout << "Registro não realizado !" << endl
-                 << endl;
+            if (validacao == 0)
+            {
+                system("clear");
+                cout << endl;
+                cout << endl;
+                cout << "---- Alerta ! ---" << endl;
+                cout << "Não existe um cliente com a CNH Informada" << endl
+                     << endl;
+            };
 
-            return;
-        };
+        } while (validacao != 1);
 
-        validacao = 0;
         do
         {
             cout << "Informe o CPF do cliente: ";
-            getline(cin, cpfTempolario);
+            getline(cin, locacao->cliente_cpf);
 
-            if (verificaCPF(listaDeClientes, cpfTempolario) == 1)
-            {
-                locacao->cliente_cpf = cpfTempolario;
-            }
-            else
+            if (verificaCPF(listaDeClientes, locacao->cliente_cpf) != 1)
             {
                 system("clear");
                 cout << endl;
@@ -786,18 +784,14 @@ struct Locacao
                 cout << "Informe com CPF valido !" << endl
                      << endl;
             };
-        } while (verificaCPF(listaDeClientes, cpfTempolario) != 1);
+        } while (verificaCPF(listaDeClientes, locacao->cliente_cpf) != 1);
 
         do
         {
             cout << "Informe a placa do veiculo: ";
-            getline(cin, placaTempolaria);
+            getline(cin, locacao->veiculo_placa);
 
-            if (verificaPlaca(listaDeVeiculos, placaTempolaria) == 1)
-            {
-                locacao->veiculo_placa = placaTempolaria;
-            }
-            else
+            if (verificaPlaca(listaDeVeiculos, locacao->veiculo_placa) != 1)
             {
                 system("clear");
                 cout << endl;
@@ -807,7 +801,7 @@ struct Locacao
                 cout << "Informe uma placa valida !" << endl
                      << endl;
             };
-        } while (verificaPlaca(listaDeVeiculos, placaTempolaria) != 1);
+        } while (verificaPlaca(listaDeVeiculos, locacao->veiculo_placa) != 1);
 
         cout << endl;
         cout << "A retirada do veiculo foi realizada ?" << endl
@@ -1035,15 +1029,161 @@ struct Locacao
     }
 };
 
+struct Ocorrencia
+{
+    string cliente_cpf;
+    string veiculo_placa;
+    DataHora data;
+    string apolice;
+    string descricao;
+
+    int verificaCPF_Placa_Em_Locacao(vector<Locacao> &listaDeLocacoes, string placa, string cpf)
+    {
+        int placaOk = 0, cpfOk = 0;
+
+        for (auto &locacao : listaDeLocacoes)
+        {
+            if (locacao.veiculo_placa == placa)
+            {
+                placaOk = 1;
+                if (locacao.cliente_cpf == cpf)
+                {
+                    cpfOk = 1;
+                    return 1;
+                }
+            }
+        };
+        if (placaOk == 0)
+        {
+            cout << endl
+                 << endl
+                 << "-- Não existe locacão com esta placa !" << endl;
+        }
+        else if (cpfOk == 0)
+        {
+            cout << endl
+                 << endl
+                 << "-- Não existe locacão para este CPF!" << endl;
+        }
+        return 0;
+    }
+
+    int menu_ocorrencia()
+    {
+        int escolha;
+        do
+        {
+            cout << "--- Gestão de Ocorrência --- " << endl;
+            cout << endl;
+
+            cout << "1 - p/ Incluir Ocorrência" << endl;
+            cout << "2 - p/ Excluir um Ocorrência" << endl;
+            cout << "3 - p/ Alterar um Ocorrência" << endl;
+            cout << "4 - p/ Listar Ocorrência por Cliente" << endl;
+            cout << "5 - p/ Listar Ocorrência por Veiculo" << endl;
+            cout << "0 - p/ Sair " << endl;
+            cout << "Sua escolha: ";
+            cin >> escolha;
+            cin.ignore();
+
+        } while (escolha < 0 || escolha > 5);
+
+        return escolha;
+    }
+
+    void incluir_ocorrencia(Ocorrencia *ocorencia, vector<Locacao> &listaDeLocacoes)
+    {
+
+        do
+        {
+            cout << "Informe o CPF cliente da ocorrencia: ";
+            getline(cin, ocorencia->cliente_cpf);
+            cout << "Informe Placa do veiculo da ocorrencia: ";
+            getline(cin, ocorencia->veiculo_placa);
+
+            if (verificaCPF_Placa_Em_Locacao(listaDeLocacoes, ocorencia->veiculo_placa, ocorencia->cliente_cpf) != 1)
+            {
+                cout << endl
+                     << "Tente novamente" << endl;
+            }
+        } while (verificaCPF_Placa_Em_Locacao(listaDeLocacoes, ocorencia->veiculo_placa, ocorencia->cliente_cpf) != 1);
+
+        cout << "informe a police: ";
+        getline(cin, ocorencia->apolice);
+        cout << "informe a descricao da ocorrencia: ";
+        getline(cin, ocorencia->descricao);
+
+        do
+        {
+            cout << "Digite o Dia da ocorencia: ";
+            cin >> ocorencia->data.Dia;
+        } while (ocorencia->data.Dia <= 0 || ocorencia->data.Dia > 31);
+
+        do
+        {
+            cout << "Digite o Mes da ocorencia:: ";
+            cin >> ocorencia->data.Mes;
+        } while (ocorencia->data.Mes <= 0 || ocorencia->data.Mes > 12);
+
+        do
+        {
+            cout << "Digite o Ano da ocorencia:: ";
+            cin >> ocorencia->data.Ano;
+        } while (ocorencia->data.Ano < 1900 || ocorencia->data.Ano > 3000);
+
+        do
+        {
+            cout << "Digite a Hora/minuto da ocorencia:(ex: 10.30 ou 18.15): ";
+            cin >> ocorencia->data.hora;
+        } while (ocorencia->data.hora <= 0 || ocorencia->data.hora > 24);
+
+        cout << endl
+             << endl;
+        cout << " -- Ocorrencia realizada com sucesso ! --" << endl
+             << endl;
+    }
+    void excluir_ocorrencia()
+    {
+    }
+    void alterar_ocorrencia()
+    {
+    }
+    void lista_ocorrencia_cliente(vector<Ocorrencia> listaDeOcorrencia)
+    {
+        string cpfdeBusca;
+        cout << "informe o CPF do cliente da ocorrencia: ";
+        getline(cin, cpfdeBusca);
+
+        cout << endl
+             << "--Ocorrencias por CPF do  Cliente--" << endl;
+
+        for (auto &ocorrencia : listaDeOcorrencia)
+        {
+            if (ocorrencia.cliente_cpf == cpfdeBusca)
+            {
+                cout << "CPF cliente da ocorrencia: " << ocorrencia.cliente_cpf << endl;
+                cout << "Placa do veiculo da ocorrencia: " << ocorrencia.veiculo_placa << endl;
+                cout << "Apolice: " << ocorrencia.apolice << endl;
+                cout << "Descricao da ocorrencia: " << ocorrencia.descricao << endl;
+                cout << "Data da ocorrencia: " << ocorrencia.data.Dia << "/" << ocorrencia.data.Mes << "/" << ocorrencia.data.Ano << endl;
+            }
+        }
+    }
+    void lista_ocorrencia_veiculo()
+    {
+    }
+};
 int main(void)
 {
     Cliente clienteDados;
     Veiculo veiculoDados;
     Locacao locacaoDados;
+    Ocorrencia ocorrenciaDados;
 
     vector<Cliente> listaDeClientes;
     vector<Veiculo> listaDeVeiculos;
     vector<Locacao> listaDeLocacoes;
+    vector<Ocorrencia> listaDeOcorrencia;
 
     int opcaoDeMenu, opcaoDeServico;
 
@@ -1053,6 +1193,7 @@ int main(void)
         cout << " 1 - P/ Gestão de Clientes" << endl;
         cout << " 2 - P/ Gestão de Veiculos" << endl;
         cout << " 3 - P/ Gestão de Locação" << endl;
+        cout << " 4 - P/ Gestão de Ocorrências" << endl;
         cout << " 0 - P/ Finalizar Programa" << endl;
         cout << " Sua opcao: ";
         cin >> opcaoDeMenu;
@@ -1142,6 +1283,36 @@ int main(void)
                 case 4:
                     locacaoDados.listarLocacoes(listaDeLocacoes);
                     break;
+                default:
+                    break;
+                }
+            } while (opcaoDeServico != 0);
+        }
+        else if (opcaoDeMenu == 4)
+        {
+            do
+            {
+                opcaoDeServico = ocorrenciaDados.menu_ocorrencia();
+
+                switch (opcaoDeServico)
+                {
+                case 1:
+                    ocorrenciaDados.incluir_ocorrencia(&ocorrenciaDados, listaDeLocacoes);
+                    listaDeOcorrencia.push_back(ocorrenciaDados);
+                    break;
+                case 2:
+                    ocorrenciaDados.excluir_ocorrencia();
+                    break;
+                case 3:
+                    ocorrenciaDados.alterar_ocorrencia();
+                    break;
+                case 4:
+                    ocorrenciaDados.lista_ocorrencia_cliente(listaDeOcorrencia);
+                    break;
+                case 5:
+                    ocorrenciaDados.lista_ocorrencia_veiculo();
+                    break;
+
                 default:
                     break;
                 }
