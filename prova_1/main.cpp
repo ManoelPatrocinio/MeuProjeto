@@ -1278,8 +1278,9 @@ struct Ocorrencia
                             cout << " -- Alteracao de Ocorrencia realizada com sucesso ! --" << endl
                                  << endl;
                         }
-
-                    }else{
+                    }
+                    else
+                    {
                         return;
                     }
                 }
@@ -1355,7 +1356,7 @@ struct Ocorrencia
 
             for (auto &ocorrencia : listaDeOcorrencia)
             {
-                if (ocorrencia.cliente_cpf == placadeBusca)
+                if (ocorrencia.veiculo_placa == placadeBusca)
                 {
                     validacao = 1;
                     cout << "CPF cliente da ocorrencia: " << ocorrencia.cliente_cpf << endl;
