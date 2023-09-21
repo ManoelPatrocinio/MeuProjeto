@@ -858,12 +858,12 @@ struct Locacao
 
         system("clear");
 
-        cout << "digite a placa de seu veiculo" << endl;
+        cout << "Digite a placa de seu veiculo: " << endl;
         getline(cin, verificacaoplaca);
 
         cout << endl;
         cout << endl;
-        cout << "--- locaçoes cadastradas --- " << endl;
+        cout << "--- Locaçoes cadastradas --- " << endl;
         cout << endl;
         cout << " Para o veiculo de placa: " << verificacaoplaca << "temos essas locações: " << endl;
         cout << endl;
@@ -874,11 +874,11 @@ struct Locacao
             if (verificacaoplaca == locacao.veiculo_placa)
             {
 
-                cout << " CNH do cliente: " << locacao.cliente_cnh << endl;
-                cout << "Data de retirada " << locacao.Data_hora_retirada.Dia << "/" << locacao.Data_hora_retirada.Mes << "/" << locacao.Data_hora_retirada.Ano << endl;
-                cout << "Hora de retirada " << locacao.Data_hora_retirada.hora << endl;
-                cout << "Data de entrega " << locacao.Data_hora_entrega.Dia << "/" << locacao.Data_hora_entrega.Mes << "/" << locacao.Data_hora_entrega.Ano << endl;
-                cout << "Hora de entrega " << locacao.Data_hora_entrega.hora << endl;
+                cout << "CNH do cliente: " << locacao.cliente_cnh << endl;
+                cout << "Data de retirada: " << locacao.Data_hora_retirada.Dia << "/" << locacao.Data_hora_retirada.Mes << "/" << locacao.Data_hora_retirada.Ano << endl;
+                cout << "Hora de retirada: " << locacao.Data_hora_retirada.hora << endl;
+                cout << "Data de entrega:" << locacao.Data_hora_entrega.Dia << "/" << locacao.Data_hora_entrega.Mes << "/" << locacao.Data_hora_entrega.Ano << endl;
+                cout << "Hora de entrega:" << locacao.Data_hora_entrega.hora << endl;
             }
             exlocacao = verificacaoplaca;
         }
