@@ -393,7 +393,7 @@ struct Veiculo
         {
             cout << endl;
             cout << endl;
-            cout << "--- Clientes Cadastrados --- " << endl;
+            cout << "--- Veiculos Cadastrados --- " << endl;
             cout << endl;
 
             for (auto &veiculo : listaVeiculos)
@@ -693,11 +693,22 @@ struct Locacao
     string cliente_cnh;
     string veiculo_placa;
 
+    int verificaPlaca(vector<Veiculo> &listaDeVeiculos, string placaTemporaria)
+    {
+        for (auto &veiculo : listaDeVeiculos)
+        {
+            if (veiculo.Placa_do_Veiculo == placaTemporaria)
+                return 1;
+        };
+
+        return 0;
+    }
     void incluirLocacao(Locacao *locacao, vector<Cliente> &listaDeClientes,
                         vector<Veiculo> &listaDeVeiculos)
     {
         int validacao = 0;
         string CNHTemporaria, placaTemporaria;
+        char realizadaTemporaria;
         system("clear");
 
         cout << endl;
@@ -705,11 +716,11 @@ struct Locacao
              << endl;
 
         cout << "Informe a CNH do cliente: ";
-        getline(cin, locacao->cliente_cnh);
+        getline(cin, CNHTemporaria);
 
         for (auto &cliente : listaDeClientes)
         {
-            if (cliente.CNH == locacao->cliente_cnh)
+            if (cliente.CNH == CNHTemporaria)
             {
                 if (cliente.CPF.length() <= 0)
                 {
@@ -725,6 +736,7 @@ struct Locacao
                 }
                 else
                 {
+                    locacao->cliente_cnh = CNHTemporaria;
                     validacao = 1;
                 }
             }
@@ -736,39 +748,45 @@ struct Locacao
             cout << endl;
             cout << "---- Alerta ! ---" << endl;
             cout << "Não existe um cliente com a CNH Informada" << endl;
-            return;
+            cout << "Registro não realizado !" << endl
+                 << endl;
+
+            return ;
         };
 
         validacao = 0;
-        cout << "Informe a placa do veiculo: ";
-        getline(cin, locacao->veiculo_placa);
 
-        for (auto &veiculo : listaDeVeiculos)
+        do
         {
-            if (veiculo.Placa_do_Veiculo == locacao->veiculo_placa)
+            cout << "Informe a placa do veiculo: ";
+            getline(cin, placaTemporaria);
+
+            if (verificaPlaca(listaDeVeiculos, placaTemporaria) == 1)
             {
-                validacao = 1;
+                locacao->veiculo_placa = placaTemporaria;
             }
-        }
-
-        if (validacao == 0)
-        {
-            cout << endl;
-            cout << endl;
-            cout << "---- Alerta ! ---" << endl;
-            cout << "Não existe um veiculo com a placa Informada" << endl;
-            return;
-        };
+            else
+            {
+                system("clear");
+                cout << endl;
+                cout << endl;
+                cout << "---- Alerta ! ---" << endl;
+                cout << "Não existe um veiculo com a placa Informada" << endl;
+                cout << "Informe uma placa valida !" << endl
+                     << endl;
+            };
+        } while (verificaPlaca(listaDeVeiculos, placaTemporaria) != 1);
 
         cout << endl;
         cout << "A retirada do veiculo foi realizada ?" << endl
              << "Digite: s - p/ Sim" << endl
              << "Digite: n - p/ Não" << endl;
         cout << "Sua escolha: ";
-        cin >> locacao->realizada;
+        cin >> realizadaTemporaria;
 
-        if (locacao->realizada == 's' || locacao->realizada == 'S')
+        if (realizadaTemporaria == 's' || realizadaTemporaria == 'S')
         {
+            locacao->realizada = 's';
             do
             {
                 cout << "Digite o Dia de retirada do veiculo: ";
@@ -798,16 +816,24 @@ struct Locacao
             cout << " -- Locação realizada com sucesso ! --" << endl
                  << endl;
         }
+        else
+        {
+            locacao->realizada = 'n';
+            cout << endl
+                 << endl;
+            cout << " -- Registro salvo com sucesso ! --" << endl
+                 << endl;
+        }
     }
 
-   
-    void excluirLocacao(vector<Veiculo>&Listaveiculo){
+    void excluirLocacao(vector<Veiculo> &Listaveiculo)
+    {
 
         int cont = -1;
         system("clear");
         string exlocacao;
-        cout<<"digite a placa de seu veiculo"<<endl;
-        getline(cin,exlocacao);
+        cout << "digite a placa de seu veiculo" << endl;
+        getline(cin, exlocacao);
 
         vector<Veiculo>::iterator i;
         i = Listaveiculo.begin();
@@ -823,21 +849,72 @@ struct Locacao
                 cout << "Locação Excluída com sucesso !" << endl;
             }
         }
-
     }
 
-    void alterarLocacao(vector<Locacao> &ListaPassageiro){
-        string placadoveiculo;
-        cout<<"digite a placa do seu veiculo"<<endl;
-        getline(cin,placadoveiculo);
+    void alterarLocacao(vector<Locacao> &listaDeLocacoes, vector<Cliente> &listaDeClientes)
+    {
+        Locacao novosDadosLocacao;
 
-          
+        cout << endl;
+        cout << "--- Alterar Locação --" << endl
+             << endl;
+
+        cout << "Informe a placa do veículo: ";
+        getline(cin, novosDadosLocacao.veiculo_placa);
+
+        cout << endl
+             << endl
+             << "--- Clientes com esse veiculo reservado ---" << endl
+             << endl;
+
+        for (auto &locacao : listaDeLocacoes)
+        {
+            if (locacao.veiculo_placa == novosDadosLocacao.veiculo_placa)
+            {
+                for (auto &cliente : listaDeClientes)
+                {
+                    if (cliente.CNH == locacao.cliente_cnh)
+                    {
+                        cout << "--- Cliente ---" << endl;
+                        cout << "Nome: " << cliente.Nome << endl;
+                        cout << "CPF: " << cliente.CPF << endl;
+                        cout << "CNH: " << cliente.CNH << endl;
+                        cout << "Data Nascimento: " << cliente.DtNascimento.Dia << "/" << cliente.DtNascimento.Mes << "/" << cliente.DtNascimento.Ano << endl;
+                    }
+                }
+            }
+        }
     }
 
-    void  listarLocacoes(vector<Locacao> &ListaLocacoes){
+    void listarLocacoes(vector<Locacao> &ListaLocacoes)
+    {
+        system("clear");
 
+        cout << "size ListaLocacoes: " << ListaLocacoes.size() << endl;
+        if (ListaLocacoes.size() <= 0)
+        {
+            cout << endl
+                 << endl
+                 << "-- Não há nenhuma locação no Registro " << endl
+                 << endl;
+        }
+        else
+        {
+            cout << "-- Registro de locações" << endl
+                 << endl;
+            for (auto &locacao : ListaLocacoes)
+            {
+                cout << "Veiculo placa:" << locacao.veiculo_placa << endl;
+                cout << "Retirada:" << locacao.realizada << endl;
+                cout << "Cliente CNH:" << locacao.cliente_cnh << endl;
+                cout << "Retirada:" << locacao.Data_hora_retirada.Dia << "/" << locacao.Data_hora_retirada.Mes << "/" << locacao.Data_hora_retirada.Ano << endl;
+                cout << "Entrega:" << locacao.Data_hora_entrega.Dia << "/" << locacao.Data_hora_entrega.Mes << "/" << locacao.Data_hora_entrega.Ano << endl;
+
+                cout << "---------------- " << endl;
+            }
+        }
     }
-   
+
     int menu_locacao(void)
     {
         int escolha;
@@ -875,6 +952,7 @@ int main(void)
 
     do
     {
+        system("clear");
         cout << " 1 - P/ Gestão de Clientes" << endl;
         cout << " 2 - P/ Gestão de Veiculos" << endl;
         cout << " 3 - P/ Gestão de Locação" << endl;
@@ -955,16 +1033,17 @@ int main(void)
                 {
                 case 1:
                     locacaoDados.incluirLocacao(&locacaoDados, listaDeClientes, listaDeVeiculos);
+                    listaDeLocacoes.push_back(locacaoDados);
                     break;
                 case 2:
                     locacaoDados.excluirLocacao(listaDeVeiculos);
                     break;
 
                 case 3:
-                locacaoDados.alterarLocacao(listaDeLocacoes);
+                    locacaoDados.alterarLocacao(listaDeLocacoes, listaDeClientes);
                     break;
                 case 4:
-                locacaoDados.listarLocacoes(listaDeLocacoes);
+                    locacaoDados.listarLocacoes(listaDeLocacoes);
                     break;
                 default:
                     break;
